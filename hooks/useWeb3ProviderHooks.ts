@@ -4,44 +4,34 @@ import { CHAINS, URLS } from '@/contracts/chains'
 import { DEFAULT_CHAINID, getActiveChainId } from '@/contracts/constant'
 import type WalletConnectProvider from '@walletconnect/ethereum-provider'
 import { walletConnectV2 } from '@/connectors/walletConnectV2'
-import { walletConnectV2 as walletConnectV2Other } from '@/app/components/WalletConnectV3/wallet/deid'
 import { metaMask } from '@/connectors/metaMask'
 
-import { useAppSelector, useAppDispatch } from '@/redux/hooks'
-import { saveIsLogin, saveIsPoPP, saveWalletType } from '@/redux/walletConnect'
-import { localStorageResetState } from '@/app/components/WalletConnect/utils'
-import toast from 'react-hot-toast/headless'
-import { isApp } from '@/utils/platform'
-import { useTranslation } from 'react-i18next'
 
 // 刷新-是否重连监听器-walletType判断上次链的方式
 export const useEagerConnect = (chainId: number | undefined) => {
-	const dispatch = useAppDispatch()
 	const chainIds = Object.keys(URLS)
-	const walletType = useAppSelector(state => state.walletConnectReducer.walletType)
 
-	useEffect(() => {
-		console.log(walletType)
-		// walletType === 'WalletConnectV2' && void walletConnectV2.connectEagerly()
-		walletType === 'MetaMask' && void getInjectedEagerly()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [walletType])
+	// useEffect(() => {
+	// 	// walletType === 'WalletConnectV2' && void walletConnectV2.connectEagerly()
+	// 	walletType === 'MetaMask' && void getInjectedEagerly()
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [walletType])
 
-	const getInjectedEagerly = async () => {
-		if (isApp()) {
-			sessionStorage.setItem('isPoPP', 'true')
-			dispatch(saveIsPoPP(true))
-		} else {
-			sessionStorage.removeItem('isPoPP')
-			dispatch(saveIsPoPP(false))
-		}
-		if (!chainId) {
-			void metaMask.connectEagerly()
-			return
-		}
-		let isTrue = getActiveChainId(chainIds, chainId)
-		isTrue && void metaMask.connectEagerly()
-	}
+	// const getInjectedEagerly = async () => {
+	// 	if (isApp()) {
+	// 		sessionStorage.setItem('isPoPP', 'true')
+	// 		dispatch(saveIsPoPP(true))
+	// 	} else {
+	// 		sessionStorage.removeItem('isPoPP')
+	// 		dispatch(saveIsPoPP(false))
+	// 	}
+	// 	if (!chainId) {
+	// 		void metaMask.connectEagerly()
+	// 		return
+	// 	}
+	// 	let isTrue = getActiveChainId(chainIds, chainId)
+	// 	isTrue && void metaMask.connectEagerly()
+	// }
 }
 
 // 监听WalletConnect链接后的的一些事件触发
@@ -60,10 +50,10 @@ export const UseWatchWalletConnectConnect = ({
 		let isTrue = getActiveChainId(chainIds, chainId)
 		console.log('chainChanged', isTrue, chainId)
 		if (!isTrue) {
-			toast.error(t('wallet.swtich.chainIds.tips'), { id: 'error-message-no' })
+			// toast.error(t('wallet.swtich.chainIds.tips'), { id: 'error-message-no' })
 			setTimeout(() => {
 				void walletConnectV2.deactivate()
-				void walletConnectV2Other.deactivate()
+				// void walletConnectV2Other.deactivate()
 			}, 500)
 			// let obj = CHAINS[DEFAULT_CHAINID]
 			// await provider?.request({
@@ -86,12 +76,10 @@ export const UseWatchWalletConnectConnect = ({
 	})
 	provider?.on('disconnect', () => {
 		console.log('disconnect')
-		dispatch(saveIsLogin(false))
-		dispatch(saveWalletType('NetWork'))
+		// dispatch(saveIsLogin(false))
 		localStorage.removeItem('isLogin')
 		localStorage.removeItem('selectChainId')
 		localStorage.removeItem('wallet')
-		localStorageResetState()
 	})
 }
 
@@ -107,14 +95,11 @@ export const UseWatchInjectedConnect = ({ dispatch, connector, t }: { dispatch: 
 		// if (!isTrue) {
 		// } else metaMask.connectEagerly()
 		if (!isTrue) {
-			toast.error(t('wallet.swtich.chainIds.tips'), { id: 'error-message-no' })
 			if (connector?.deactivate) {
 				void connector.deactivate()
 			} else {
 				void connector.resetState()
 			}
-			dispatch(saveIsLogin(false))
-			dispatch(saveWalletType('NetWork'))
 			localStorage.removeItem('isLogin')
 			localStorage.removeItem('selectChainId')
 			localStorage.removeItem('wallet')
