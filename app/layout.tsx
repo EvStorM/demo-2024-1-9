@@ -3,6 +3,7 @@ import { Metadata } from "next/types";
 import "./globals.css";
 import { Providers } from "./providers";
 import Web3ProviderPage from "./components/Wbe3Provider";
+import Script from "next/script";
 // import "globalthis/polyfill";
 
 // const inter = Inter({ subsets: ['latin'] })
@@ -15,7 +16,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <Script src="https://unpkg.com/vconsole/dist/vconsole.min.js" />
+      </head>
       <body>
+        <Script id="13">{`
+        new VConsole();
+        `}</Script>
         <Providers>
           <Web3ProviderPage>{children}</Web3ProviderPage>
         </Providers>

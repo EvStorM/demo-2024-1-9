@@ -37,6 +37,7 @@ export default function Home() {
           <code className="font-mono font-bold">app/page.tsx</code>
         </p>
       </div>
+      {typeof window !== undefined ? <div>is window {window ? 1 : 0}</div> : <div>not window</div>}
       <Button
         onClick={() => {
           setTest(test + 1);
