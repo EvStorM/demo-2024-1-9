@@ -5,7 +5,6 @@ import { useEagerConnect } from "@/hooks/useWeb3ProviderHooks";
 import { ConstantInit } from "@/contracts/constant.init";
 import { URLS } from "@/contracts/chains";
 import { DEFAULT_CHAINID, getActiveChainId } from "@/contracts/constant";
-import AwsStorageClient from "@/contracts/aws";
 import AllProviderContext from "@/context/allProvider";
 
 declare var window: any;
@@ -38,14 +37,6 @@ const Web3ProviderPage = ({ children }: { children: React.ReactNode }) => {
     }
   }, [chainId, chainIds, provider]);
 
-  /**
-   * aws 上传
-   */
-  const awsStore = useMemo<any>(() => {
-    let libraryInit = new AwsStorageClient();
-    return libraryInit;
-  }, []);
-
   useEffect(() => {
     if (data && account) handleAmountData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,10 +45,6 @@ const Web3ProviderPage = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (typeof window !== undefined) window.data = data;
   }, [data]);
-
-  useEffect(() => {
-    if (typeof window !== undefined) window.awsStore = awsStore;
-  }, [awsStore]);
 
   // useEffect((): any => {
   // 	if (!!provider) {
@@ -94,7 +81,7 @@ const Web3ProviderPage = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {}
   };
 
-  return <AllProviderContext.Provider value={{ blockNumber, data, balance: amount, awsStore }}>{children}</AllProviderContext.Provider>;
+  return <AllProviderContext.Provider value={{ blockNumber, data, balance: amount }}>{children}</AllProviderContext.Provider>;
 };
 
 export default Web3ProviderPage;
